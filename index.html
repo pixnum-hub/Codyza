@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#111">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="/mnt/data/A_pair_of_digital_vector_app_icons_are_displayed,_.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/dracula.min.css">
 
@@ -53,13 +53,14 @@ body.dark{background:linear-gradient(135deg,#000,#111,#222);}
 #files li.active{background:rgba(255,255,255,0.18);}
 #editorWrap,#previewWrap,#consoleWrap{border-radius:16px; overflow:hidden; background:var(--glass); position:relative; min-height:100px;}
 .CodeMirror{height:100%; font-size:14px;}
-#preview{width:100%; height:100%; border:none;}
+#preview{width:100%; height:100%; border:none; transform-origin:top left;}
 #console{height:90px;background:#000;color:#0f0;padding:6px;border-radius:14px;font-family:monospace;overflow:auto;}
 .resizer{height:6px;background:rgba(255,255,255,0.25);cursor:ns-resize;border-radius:3px;margin:2px 0;}
 #previewWrap.fullscreen{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;border-radius:0;background:var(--glass);display:flex;flex-direction:column;}
 .floating{position:fixed;bottom:14px;right:14px;display:flex;gap:8px;}
 .floating button{width:44px;height:44px;border-radius:50%;border:none;background:rgba(0,0,0,0.55);color:#fff;font-size:18px;}
 footer{text-align:center;font-size:12px;opacity:0.85;margin-top:4px;}
+.highlight{background:yellow;}
 </style>
 </head>
 <body>
@@ -111,137 +112,95 @@ footer{text-align:center;font-size:12px;opacity:0.85;margin-top:4px;}
 
 <script>
 document.addEventListener("DOMContentLoaded",function(){
-  // Initialize
+  // Setup CodeMirror
   const editorTA=document.getElementById("editor");
   const preview=document.getElementById("preview");
   const consoleDiv=document.getElementById("console");
   const cm=CodeMirror.fromTextArea(editorTA,{theme:"dracula",lineNumbers:true,mode:"htmlmixed"});
-  
-  let files={"index.html":"<!DOCTYPE html>\n<html>\n<body>\n<h1>Hello World</h1>\n</body>\n</html>","style.css":"","script.js":""};
+
+  // Files
+  let files={"index.html":"<!DOCTYPE html>\n<html>\n<body>\n<h1>Hello World</h1>\n</body>\n</html>"};
   let active="index.html", autoRun=false, previewLocked=false, previewZoom=1;
-  
+
+  // Language select
   const langSelect=document.getElementById("langSelect");
   const languages=["html","javascript","css","python","java","c","cpp","php","go","rust","kotlin","swift","ruby","bash","lua","typescript","json","xml","yaml","dart","scala"];
-  const templates={
-    html:"<!DOCTYPE html>\n<html>\n<body>\n<h1>Hello World</h1>\n</body>\n</html>",
-    javascript:"console.log('Hello World');",
-    css:"body{font-family:sans-serif;}",
-    python:"print('Hello World')",
-    java:"class Main{public static void main(String[]a){System.out.println(\"Hello World\");}}",
-    c:"#include<stdio.h>\nint main(){printf(\"Hello World\");return 0;}",
-    cpp:"#include<iostream>\nint main(){std::cout<<\"Hello World\";return 0;}",
-    php:"<?php echo 'Hello World'; ?>",
-    go:"package main\nimport \"fmt\"\nfunc main(){fmt.Println(\"Hello World\")}",
-    rust:"fn main(){println!(\"Hello World\");}",
-    kotlin:"fun main(){println(\"Hello World\")}",
-    swift:"print(\"Hello World\")",
-    ruby:"puts 'Hello World'",
-    bash:"echo 'Hello World'",
-    lua:"print('Hello World')",
-    typescript:"console.log('Hello World');",
-    json:"{\n  \"message\": \"Hello World\"\n}",
-    xml:"<message>Hello World</message>",
-    yaml:"message: Hello World",
-    dart:"void main(){print('Hello World');}",
-    scala:"object Main extends App { println(\"Hello World\") }"
-  };
-  
   languages.forEach(l=>{let opt=document.createElement("option"); opt.value=l; opt.text=l; langSelect.appendChild(opt);});
-  
-  // Dark mode
+
+  // Dark Mode
   document.getElementById("darkToggle").addEventListener("click",()=>document.body.classList.toggle("dark"));
-  
-  // File list
+
+  // File List
   const fileList=document.getElementById("fileList");
   function refreshFiles(){
     fileList.innerHTML="";
     Object.keys(files).forEach(f=>{
       let li=document.createElement("li");
-      li.textContent=f; li.setAttribute("draggable","true"); li.dataset.filename=f;
+      li.textContent=f; li.dataset.filename=f;
       if(f===active) li.classList.add("active");
       li.onclick=()=>{files[active]=cm.getValue(); active=f; cm.setValue(files[f]); refreshFiles();}
-      li.addEventListener("dragstart",e=>{e.dataTransfer.setData("text/plain",f);});
-      li.addEventListener("dragover",e=>e.preventDefault());
-      li.addEventListener("drop",e=>{
-        e.preventDefault();
-        const dragged=e.dataTransfer.getData("text/plain");
-        if(dragged===f) return;
-        const entries=Object.entries(files);
-        const dIndex=entries.findIndex(([k])=>k===dragged);
-        const tIndex=entries.findIndex(([k])=>k===f);
-        const [dEntry]=entries.splice(dIndex,1);
-        entries.splice(tIndex,0,dEntry);
-        files=Object.fromEntries(entries);
-        refreshFiles();
-      });
       fileList.appendChild(li);
     });
   }
   refreshFiles();
-  
+
   function newFile(){
     let n=prompt("File name");
     if(!n||files[n]) return;
-    let lang=prompt("Language for template:", "javascript");
-    files[n]=templates[lang]||"";
+    files[n]="";
     active=n;
     cm.setValue(files[n]);
     refreshFiles();
   }
-  
-  // Run / Live Preview
-  function run(){ if(previewLocked) return; files[active]=cm.getValue(); preview.srcdoc=`<style>${files["style.css"]||""}</style>${files["index.html"]||""}<script>${files["script.js"]||""}<\/script>`;}
+
+  // Run / Preview
+  function run(){if(previewLocked) return; files[active]=cm.getValue(); preview.srcdoc=files[active];}
   function clearPreview(){preview.srcdoc="";}
   function toggleAuto(){autoRun=!autoRun;}
   cm.on("change",()=>{files[active]=cm.getValue(); if(autoRun) run();});
   document.getElementById("runBtn").onclick=run;
-  
+
   // Floating buttons
   function copy(){navigator.clipboard.writeText(cm.getValue());}
   function paste(){navigator.clipboard.readText().then(t=>cm.replaceSelection(t));}
   function selectAll(){cm.execCommand("selectAll");}
   function toggleKeymap(){cm.getOption("keyMap")==="vim"?cm.setOption("keyMap","emacs"):cm.setOption("keyMap","vim");}
-  function exportZIP(){alert("ZIP export ready");}
+  function exportZIP(){alert("ZIP export placeholder");}
   function share(){location.hash=btoa(JSON.stringify(files)); alert("Shareable URL created");}
   function explain(){consoleDiv.textContent="AI Explanation:\n\n"+cm.getValue();}
+
   window.copy=copy; window.paste=paste; window.selectAll=selectAll;
   window.toggleKeymap=toggleKeymap; window.clearPreview=clearPreview; window.toggleAuto=toggleAuto;
   window.exportZIP=exportZIP; window.share=share; window.explain=explain;
-  
+
   // Preview controls
-  const previewWrap=document.getElementById("previewWrap"); let previewZoom=1;
+  const previewWrap=document.getElementById("previewWrap"); 
   function toggleFullscreenPreview(){previewWrap.classList.toggle("fullscreen");}
   function popoutPreview(){const w=window.open("","_blank","width=800,height=600"); w.document.write(preview.srcdoc); w.document.close();}
-  let previewLockedFlag=false;
   const lockBtn=document.getElementById("lockBtn");
-  function togglePreviewLock(){previewLockedFlag=!previewLockedFlag; previewLocked=previewLockedFlag; lockBtn.textContent=previewLocked?"🔓 Unlock":"🔒 Lock";}
+  function togglePreviewLock(){previewLocked=!previewLocked; lockBtn.textContent=previewLocked?"🔓 Unlock":"🔒 Lock";}
   function zoomPreview(dir){if(dir==="in") previewZoom+=0.1; else previewZoom-=0.1; if(previewZoom<0.2) previewZoom=0.2; preview.style.transform=`scale(${previewZoom})`; preview.style.transformOrigin="top left";}
   window.toggleFullscreenPreview=toggleFullscreenPreview; window.popoutPreview=popoutPreview; window.togglePreviewLock=togglePreviewLock; window.zoomPreview=zoomPreview;
-  
+
   // Resizers
-  function makeResizable(resizerId,wrapId){
+  function makeResizable(resizerId,wrap){
     const resizer=document.getElementById(resizerId);
-    const wrap=document.getElementById(wrapId);
     let resizing=false;
     resizer.addEventListener("mousedown",e=>{resizing=true;e.preventDefault();});
-    document.addEventListener("mousemove",e=>{if(!resizing) return; let newH=e.clientY-wrap.getBoundingClientRect().top; if(newH>50){wrap.style.height=newH+"px"; if(wrapId==="editorWrap")cm.refresh();}});
+    document.addEventListener("mousemove",e=>{if(!resizing) return; let newH=e.clientY-wrap.getBoundingClientRect().top; if(newH>50){wrap.style.height=newH+"px"; cm.refresh();}});
     document.addEventListener("mouseup",()=>{resizing=false;});
   }
-  makeResizable("editorResizer","editorWrap");
-  makeResizable("previewResizer","previewWrap");
-  
+  makeResizable("editorResizer",document.getElementById("editorWrap"));
+  makeResizable("previewResizer",document.getElementById("previewWrap"));
+
   // Auto-save
   setInterval(()=>{files[active]=cm.getValue();},10000);
-  
-  // Restore from hash
-  if(location.hash){Object.assign(files,JSON.parse(atob(location.hash.slice(1)))); active="index.html"; refreshFiles(); cm.setValue(files[active]); run();}
-});
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js')
-  .then(()=>console.log('Codyza Service Worker registered'))
-  .catch(err=>console.log('SW registration failed:', err));
-}
 
+  // PWA service worker
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('service-worker.js').then(()=>console.log("Codyza SW registered")).catch(e=>console.log("SW failed",e));
+  }
+});
 </script>
 </body>
 </html>
