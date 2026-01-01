@@ -5,8 +5,7 @@
 <title>Codyza</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#111">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/dracula.min.css">
 
@@ -15,192 +14,248 @@
   --glass: rgba(255,255,255,0.12);
   --border: rgba(255,255,255,0.28);
   --blur: blur(18px);
-  --dark: rgba(0,0,0,0.45);
+  --dark: rgba(0,0,0,0.55);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{
-  min-height:100vh; display:flex; justify-content:center; align-items:center;
-  font-family:system-ui,Segoe UI,Roboto; background:linear-gradient(135deg,#0f2027,#203a43,#2c5364); color:#fff;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-family:system-ui,Segoe UI;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  color:#fff;
 }
 body.dark{background:linear-gradient(135deg,#000,#111,#222);}
+
 #appFrame{
-  width:96%; max-width:480px; min-height:94vh; display:flex; flex-direction:column;
-  gap:12px; padding:14px; border-radius:22px; border:1px solid var(--border);
-  background:var(--glass); backdrop-filter:var(--blur); position:relative;
+  width:96%;
+  max-width:720px;
+  min-height:96vh;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  padding:14px;
+  border-radius:22px;
+  border:1px solid var(--border);
+  background:var(--glass);
+  backdrop-filter:var(--blur);
+  position:relative;
 }
-#title{text-align:center;font-size:20px;font-weight:600;margin-top:6px;}
+
+#title{text-align:center;font-size:20px;font-weight:600;}
+
 #darkToggle{
-  position:absolute; top:10px; right:10px; width:44px; height:44px;
-  border-radius:50%; border:none; background:var(--dark); color:#fff; font-size:20px; cursor:pointer;
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  border:none;
+  background:var(--dark);
+  color:#fff;
+  font-size:20px;
+  cursor:pointer;
 }
+
 .controls{
-  display:flex; flex-wrap:wrap; justify-content:space-between; gap:6px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
 }
-.controls button,
-.controls select,
-.controls input{
-  flex:1 1 calc(33% - 6px); min-width:100px; max-width:150px;
-  padding:8px; border-radius:12px; border:none; background:var(--dark); color:#fff; font-size:14px; text-align:center;
+.controls button{
+  flex:1 1 calc(33% - 8px);
+  padding:8px;
+  border-radius:12px;
+  border:none;
+  background:var(--dark);
+  color:#fff;
+  font-size:14px;
 }
-@media(max-width:500px){
-  .controls button,
-  .controls select,
-  .controls input{flex:1 1 100%; max-width:none;}
+@media(max-width:600px){
+  .controls button{flex:1 1 100%;}
 }
-#files{background:rgba(0,0,0,0.25); border-radius:14px; padding:6px;}
-#files ul{list-style:none;padding:0;margin:6px 0 0;}
-#files li{padding:6px 8px; border-radius:8px; cursor:pointer;}
-#files li.active{background:rgba(255,255,255,0.18);}
-#editorWrap,#previewWrap,#consoleWrap{border-radius:16px; overflow:hidden; background:var(--glass); position:relative; min-height:100px;}
-.CodeMirror{height:100%; font-size:14px;}
-#preview{width:100%; height:100%; border:none; transform-origin:top left;}
-#console{height:90px;background:#000;color:#0f0;padding:6px;border-radius:14px;font-family:monospace;overflow:auto;}
-.resizer{height:6px;background:rgba(255,255,255,0.25);cursor:ns-resize;border-radius:3px;margin:2px 0;}
-#previewWrap.fullscreen{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;border-radius:0;background:var(--glass);display:flex;flex-direction:column;}
-.floating{position:fixed;bottom:14px;right:14px;display:flex;gap:8px;}
-.floating button{width:44px;height:44px;border-radius:50%;border:none;background:rgba(0,0,0,0.55);color:#fff;font-size:18px;}
-footer{text-align:center;font-size:12px;opacity:0.85;margin-top:4px;}
-.highlight{background:yellow;}
+
+.panel{
+  border-radius:16px;
+  background:var(--glass);
+  overflow:hidden;
+}
+
+#editorWrap{min-height:240px;}
+#previewWrap{min-height:360px;}
+#consoleWrap{min-height:120px;}
+
+.CodeMirror{height:100%;font-size:14px;}
+
+#preview{
+  width:100%;
+  height:100%;
+  border:none;
+  background:#fff;
+}
+
+.resizer{
+  height:6px;
+  background:rgba(255,255,255,0.25);
+  cursor:ns-resize;
+}
+
+#console{
+  background:#000;
+  color:#0f0;
+  padding:6px;
+  font-family:monospace;
+  height:100%;
+  overflow:auto;
+}
+
+.floating{
+  position:fixed;
+  bottom:16px;
+  right:16px;
+  display:flex;
+  gap:8px;
+}
+.floating button{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  border:none;
+  background:rgba(0,0,0,0.65);
+  color:#fff;
+  font-size:18px;
+}
+
+footer{
+  text-align:center;
+  font-size:12px;
+  opacity:0.8;
+}
+
+/* 🔥 FULLSCREEN PREVIEW MODE */
+#appFrame.preview-only #editorWrap,
+#appFrame.preview-only #editorResizer,
+#appFrame.preview-only #consoleWrap,
+#appFrame.preview-only #previewResizer,
+#appFrame.preview-only .floating,
+#appFrame.preview-only .controls {
+  display:none;
+}
+
+#appFrame.preview-only #previewWrap{
+  position:fixed;
+  inset:0;
+  width:100vw;
+  height:100vh;
+  border-radius:0;
+  z-index:9999;
+  background:#fff;
+}
 </style>
 </head>
+
 <body>
 <div id="appFrame">
   <button id="darkToggle">🌓</button>
   <div id="title">Codyza</div>
+
   <div class="controls">
     <button id="runBtn">▶ Run</button>
+    <button onclick="clearEditor()">🧽 Clear Code</button>
     <button onclick="clearPreview()">🧹 Clear Preview</button>
     <button onclick="toggleAuto()">⚡ Auto-Run</button>
-    <select id="langSelect"></select>
-    <button onclick="exportZIP()">⬇ Export ZIP</button>
-    <button onclick="share()">🔗 Share</button>
-    <button onclick="explain()">🤖 Explain</button>
-    <button onclick="toggleKeymap()">⌨ Vim/Emacs</button>
-    <button onclick="toggleFullscreenPreview()">🖥 Fullscreen</button>
-    <button onclick="popoutPreview()">🔲 Pop-out</button>
-    <button id="lockBtn" onclick="togglePreviewLock()">🔒 Lock</button>
-    <button onclick="zoomPreview('in')">➕ Zoom</button>
-    <button onclick="zoomPreview('out')">➖ Zoom</button>
+    <button onclick="toggleFullPreview()">🖥 Full Preview</button>
   </div>
 
-  <div id="files">
-    <button onclick="newFile()">+ New File</button>
-    <ul id="fileList"></ul>
+  <div id="editorWrap" class="panel">
+    <textarea id="editor"></textarea>
+  </div>
+  <div class="resizer" id="editorResizer"></div>
+
+  <div id="previewWrap" class="panel">
+    <iframe id="preview"></iframe>
+  </div>
+  <div class="resizer" id="previewResizer"></div>
+
+  <div id="consoleWrap" class="panel">
+    <div id="console"></div>
   </div>
 
-  <div id="editorWrap"><textarea id="editor"></textarea></div>
-  <div id="editorResizer" class="resizer"></div>
-  <div id="previewWrap"><iframe id="preview"></iframe></div>
-  <div id="previewResizer" class="resizer"></div>
-  <div id="consoleWrap"><div id="console"></div></div>
   <footer>© Manik Roy 2025. All Rights Reserved.</footer>
 </div>
 
 <div class="floating">
-  <button onclick="copy()">📋</button>
-  <button onclick="paste()">📥</button>
+  <button onclick="copyCode()">📋</button>
+  <button onclick="pasteCode()">📥</button>
   <button onclick="selectAll()">🔲</button>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/javascript/javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/xml/xml.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/css/css.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/htmlmixed/htmlmixed.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/keymap/vim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/keymap/emacs.min.js"></script>
 
 <script>
-document.addEventListener("DOMContentLoaded",function(){
-  // Setup CodeMirror
-  const editorTA=document.getElementById("editor");
-  const preview=document.getElementById("preview");
-  const consoleDiv=document.getElementById("console");
-  const cm=CodeMirror.fromTextArea(editorTA,{theme:"dracula",lineNumbers:true,mode:"htmlmixed"});
+document.addEventListener("DOMContentLoaded",()=>{
+  const cm = CodeMirror.fromTextArea(editor,{
+    mode:"htmlmixed",
+    theme:"dracula",
+    lineNumbers:true
+  });
 
-  // Files
-  let files={"index.html":"<!DOCTYPE html>\n<html>\n<body>\n<h1>Hello World</h1>\n</body>\n</html>"};
-  let active="index.html", autoRun=false, previewLocked=false, previewZoom=1;
+  const preview = document.getElementById("preview");
+  const appFrame = document.getElementById("appFrame");
+  let autoRun=false, previewOnly=false;
 
-  // Language select
-  const langSelect=document.getElementById("langSelect");
-  const languages=["html","javascript","css","python","java","c","cpp","php","go","rust","kotlin","swift","ruby","bash","lua","typescript","json","xml","yaml","dart","scala"];
-  languages.forEach(l=>{let opt=document.createElement("option"); opt.value=l; opt.text=l; langSelect.appendChild(opt);});
+  cm.setValue(`<!DOCTYPE html>
+<html>
+<body>
+<h1>Hello Codyza</h1>
+<p>Edit and Run</p>
+</body>
+</html>`);
 
-  // Dark Mode
-  document.getElementById("darkToggle").addEventListener("click",()=>document.body.classList.toggle("dark"));
-
-  // File List
-  const fileList=document.getElementById("fileList");
-  function refreshFiles(){
-    fileList.innerHTML="";
-    Object.keys(files).forEach(f=>{
-      let li=document.createElement("li");
-      li.textContent=f; li.dataset.filename=f;
-      if(f===active) li.classList.add("active");
-      li.onclick=()=>{files[active]=cm.getValue(); active=f; cm.setValue(files[f]); refreshFiles();}
-      fileList.appendChild(li);
-    });
+  function run(){ preview.srcdoc = cm.getValue(); }
+  function clearEditor(){
+    if(confirm("Clear editor?")){
+      cm.setValue("");
+      preview.srcdoc="";
+    }
   }
-  refreshFiles();
-
-  function newFile(){
-    let n=prompt("File name");
-    if(!n||files[n]) return;
-    files[n]="";
-    active=n;
-    cm.setValue(files[n]);
-    refreshFiles();
+  function clearPreview(){ preview.srcdoc=""; }
+  function toggleAuto(){ autoRun=!autoRun; }
+  function toggleFullPreview(){
+    previewOnly=!previewOnly;
+    appFrame.classList.toggle("preview-only",previewOnly);
   }
 
-  // Run / Preview
-  function run(){if(previewLocked) return; files[active]=cm.getValue(); preview.srcdoc=files[active];}
-  function clearPreview(){preview.srcdoc="";}
-  function toggleAuto(){autoRun=!autoRun;}
-  cm.on("change",()=>{files[active]=cm.getValue(); if(autoRun) run();});
-  document.getElementById("runBtn").onclick=run;
+  cm.on("change",()=>{ if(autoRun) run(); });
 
-  // Floating buttons
-  function copy(){navigator.clipboard.writeText(cm.getValue());}
-  function paste(){navigator.clipboard.readText().then(t=>cm.replaceSelection(t));}
-  function selectAll(){cm.execCommand("selectAll");}
-  function toggleKeymap(){cm.getOption("keyMap")==="vim"?cm.setOption("keyMap","emacs"):cm.setOption("keyMap","vim");}
-  function exportZIP(){alert("ZIP export placeholder");}
-  function share(){location.hash=btoa(JSON.stringify(files)); alert("Shareable URL created");}
-  function explain(){consoleDiv.textContent="AI Explanation:\n\n"+cm.getValue();}
+  runBtn.onclick = run;
+  darkToggle.onclick = ()=>document.body.classList.toggle("dark");
 
-  window.copy=copy; window.paste=paste; window.selectAll=selectAll;
-  window.toggleKeymap=toggleKeymap; window.clearPreview=clearPreview; window.toggleAuto=toggleAuto;
-  window.exportZIP=exportZIP; window.share=share; window.explain=explain;
+  window.copyCode = ()=>navigator.clipboard.writeText(cm.getValue());
+  window.pasteCode = ()=>navigator.clipboard.readText().then(t=>cm.replaceSelection(t));
+  window.selectAll = ()=>cm.execCommand("selectAll");
+  window.clearEditor = clearEditor;
+  window.clearPreview = clearPreview;
+  window.toggleAuto = toggleAuto;
+  window.toggleFullPreview = toggleFullPreview;
 
-  // Preview controls
-  const previewWrap=document.getElementById("previewWrap"); 
-  function toggleFullscreenPreview(){previewWrap.classList.toggle("fullscreen");}
-  function popoutPreview(){const w=window.open("","_blank","width=800,height=600"); w.document.write(preview.srcdoc); w.document.close();}
-  const lockBtn=document.getElementById("lockBtn");
-  function togglePreviewLock(){previewLocked=!previewLocked; lockBtn.textContent=previewLocked?"🔓 Unlock":"🔒 Lock";}
-  function zoomPreview(dir){if(dir==="in") previewZoom+=0.1; else previewZoom-=0.1; if(previewZoom<0.2) previewZoom=0.2; preview.style.transform=`scale(${previewZoom})`; preview.style.transformOrigin="top left";}
-  window.toggleFullscreenPreview=toggleFullscreenPreview; window.popoutPreview=popoutPreview; window.togglePreviewLock=togglePreviewLock; window.zoomPreview=zoomPreview;
-
-  // Resizers
-  function makeResizable(resizerId,wrap){
-    const resizer=document.getElementById(resizerId);
-    let resizing=false;
-    resizer.addEventListener("mousedown",e=>{resizing=true;e.preventDefault();});
-    document.addEventListener("mousemove",e=>{if(!resizing) return; let newH=e.clientY-wrap.getBoundingClientRect().top; if(newH>50){wrap.style.height=newH+"px"; cm.refresh();}});
-    document.addEventListener("mouseup",()=>{resizing=false;});
+  function makeResizable(resizer, panel){
+    let active=false;
+    resizer.onmousedown=e=>{active=true;e.preventDefault();};
+    document.onmousemove=e=>{
+      if(!active) return;
+      let h=e.clientY-panel.getBoundingClientRect().top;
+      if(h>120){ panel.style.height=h+"px"; cm.refresh(); }
+    };
+    document.onmouseup=()=>active=false;
   }
-  makeResizable("editorResizer",document.getElementById("editorWrap"));
-  makeResizable("previewResizer",document.getElementById("previewWrap"));
 
-  // Auto-save
-  setInterval(()=>{files[active]=cm.getValue();},10000);
-
-  // PWA service worker
-  if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('service-worker.js').then(()=>console.log("Codyza SW registered")).catch(e=>console.log("SW failed",e));
-  }
+  makeResizable(editorResizer,editorWrap);
+  makeResizable(previewResizer,previewWrap);
 });
 </script>
 </body>
-</html>
+  </html>
